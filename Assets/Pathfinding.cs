@@ -8,6 +8,9 @@ using System.Diagnostics;
 public class Pathfinding : MonoBehaviour {
 
     public Transform seeker, target;
+    public long AStarTime, AStarAltTime, BFSTime, DFSTime, UCSTime;
+    public long AStarExpanded = 0, AStarAltExpanded = 0, BFSExpanded = 0, DFSExpanded = 0, UCSExpanded = 0;
+    public long AStarFringeLength = 1, AStarAltFringeLength = 1, BFSFringeLength = 1, DFSFringeLength = 1, UCSFringeLength = 1; 
     
     Grid grid;
 
@@ -16,18 +19,34 @@ public class Pathfinding : MonoBehaviour {
     }
 
     void Update() {
-		BFS(seeker.position,target.position);
-		DFS(seeker.position,target.position);
+	BFS(seeker.position,target.position);
+	DFS(seeker.position,target.position);
         UCS(seeker.position,target.position);   
         AStar(seeker.position,target.position, "1");  //This calls AStar with an additional argument to run the alternative heuristic function
-        AStar(seeker.position,target.position); 
+        AStar(seeker.position,target.position);
+        print("Time Elapsed: ");
+        print("A* ==> " + AStarTime + " ms");
+        print("A* Alternative ==> " + AStarAltTime + " ms");
+        print("DFS ==> " + DFSTime + " ms");
+        print("BFS ==> " + BFSTime + " ms");
+        print("UCS ==> " + UCSTime + " ms");
+        print("Number of Expanded Nodes: ");
+        print("A* ==> " + AStarExpanded);
+        print("A* Alternative ==> " + AStarAltExpanded);
+        print("DFS ==> " + DFSExpanded);
+        print("BFS ==> " + BFSExpanded);
+        print("UCS ==> " + UCSExpanded);
+        print("Max Fringe Size: ");
+        print("A* ==> " + AStarFringeLength);
+        print("A* Alternative ==> " + AStarAltFringeLength);
+        print("DFS ==> " + DFSFringeLength);
+        print("BFS ==> " + BFSFringeLength);
+        print("UCS ==> " + UCSFringeLength);
     }
 
     void AStar(Vector3 startPos, Vector3 targetPos, String algoIndex = "0") {
     	Stopwatch stopwatch = new Stopwatch();
     	stopwatch.Start();
-    	int expandedNodesCount = 0;
-    	int fringeNodesCount = 1;
         Environment.SetEnvironmentVariable("AStarAlt", algoIndex);
 
         Node startNode = grid.NodeFromWorldPoint(startPos);
@@ -38,20 +57,22 @@ public class Pathfinding : MonoBehaviour {
 
         while (openSet.Count > 0) {
             Node currentNode = openSet.RemoveFirst();
-            expandedNodesCount++;
+            if(algoIndex.Equals("0")){
+                AStarExpanded++;
+            }
+            else{
+                AStarAltExpanded++;
+            }
+            
             closedSet.Add(currentNode);
             if (currentNode == targetNode) {
             	stopwatch.Stop();
             	if(algoIndex.Equals("0")){
-                	print("A* ==> Time elapsed: " + stopwatch.ElapsedMilliseconds + "ms");
-                	print("A* ==> Number of expanded nodes: " + expandedNodesCount);
-                	print("A* ==> Total number of nodes added to the fringe: " + fringeNodesCount);
+                    AStarTime = stopwatch.ElapsedMilliseconds;
                     RetracePath(startNode,targetNode, 1);
                 }
                 else{
-                	print("A* Alternative ==> Time elapsed: " + stopwatch.ElapsedMilliseconds + "ms");
-                	print("A* Alternative ==> Number of expanded nodes: " + expandedNodesCount);
-                	print("A* Alternative ==> Total number of nodes added to the fringe: " + fringeNodesCount);
+                    AStarAltTime = stopwatch.ElapsedMilliseconds;
                     RetracePath(startNode,targetNode, 2);
                 }
                 return;
@@ -70,24 +91,25 @@ public class Pathfinding : MonoBehaviour {
 
                     if (!openSet.Contains(neighbour)){
                         openSet.Add(neighbour);
-                        fringeNodesCount++;
                     }
                     else {
                         openSet.UpdateItem(neighbour);
                     }
                 }
             }
+            if(algoIndex.Equals("0") && openSet.Count > AStarFringeLength){
+                AStarFringeLength = openSet.Count;
+            }
+            else if(algoIndex.Equals("1") && openSet.Count > AStarAltFringeLength){
+                AStarAltFringeLength = openSet.Count;
+            }
         }
-        
     }
 
     void DFS(Vector3 startPos, Vector3 targetPos) {
         // This is an iterative DFS. A recursive one would require too much memory
         // on a large grid. It's only fair to compare the algorithms based on their 
         // best performance.
-
-    	int expandedNodesCount = 0;
-    	int fringeNodesCount = 1;
         Stopwatch stopwatch = new Stopwatch();
     	stopwatch.Start();
 
@@ -101,12 +123,10 @@ public class Pathfinding : MonoBehaviour {
 
         while (stack.Count > 0) {
             Node currentNode = stack.Pop();
-            expandedNodesCount++;
+            DFSExpanded++;
             if (currentNode == targetNode) {
             	stopwatch.Stop();
-            	print("DFS ==> Time elapsed: " + stopwatch.ElapsedMilliseconds + "ms");
-            	print("DFS ==> Number of expanded nodes: " + expandedNodesCount);
-            	print("DFS ==> Total number of nodes added to the fringe: " + fringeNodesCount);
+                DFSTime = stopwatch.ElapsedMilliseconds;
                 RetracePath(startNode, targetNode, 3);
                 return;
             }
@@ -122,15 +142,15 @@ public class Pathfinding : MonoBehaviour {
                 }
                 neighbour.parent = currentNode;
                	stack.Push(neighbour);
-                fringeNodesCount++;
+            }
+            if(stack.Count > DFSFringeLength){
+                DFSFringeLength = stack.Count;
             }
         }
     }
 
     void BFS(Vector3 startPos, Vector3 targetPos) {
 
-    	int expandedNodesCount = 0;
-    	int fringeNodesCount = 1;
     	Stopwatch stopwatch = new Stopwatch();
     	stopwatch.Start();
         Node startNode = grid.NodeFromWorldPoint(startPos);
@@ -143,12 +163,10 @@ public class Pathfinding : MonoBehaviour {
 
         while (queue.Count > 0) {
             Node currentNode = queue.Dequeue();
-            expandedNodesCount++;
+            BFSExpanded++;
             if (currentNode == targetNode) {
                 stopwatch.Stop();
-            	print("BFS ==> Time elapsed: " + stopwatch.ElapsedMilliseconds + "ms");
-            	print("BFS ==> Number of expanded nodes: " + expandedNodesCount);
-            	print("BFS ==> Total number of nodes added to the fringe: " + fringeNodesCount);
+                BFSTime = stopwatch.ElapsedMilliseconds;
                 RetracePath(startNode,targetNode, 4);
                 return;
             }
@@ -165,16 +183,16 @@ public class Pathfinding : MonoBehaviour {
                 if (!visited.Contains(neighbour)) {
                    	neighbour.parent = currentNode;
                    	queue.Enqueue(neighbour);
-                	fringeNodesCount++;
                 }
+            }
+            if(queue.Count > BFSFringeLength){
+                BFSFringeLength = queue.Count;
             }
         }
     }
 
     void UCS(Vector3 startPos, Vector3 targetPos) {
 
-    	int expandedNodesCount = 0;
-    	int fringeNodesCount = 1;
     	Stopwatch stopwatch = new Stopwatch();
     	stopwatch.Start();
         Node startNode = grid.NodeFromWorldPoint(startPos);
@@ -190,13 +208,11 @@ public class Pathfinding : MonoBehaviour {
      
         while (queue.Count > 0) {
             NodePriority p = queue.RemoveFirst();
-            expandedNodesCount++;
+            UCSExpanded++;
 
             if (p.node == targetNode) {
             	stopwatch.Stop();
-            	print("UCS ==> Time elapsed: " + stopwatch.ElapsedMilliseconds + "ms");
-            	print("UCS ==> Number of expanded nodes: " + expandedNodesCount);
-            	print("UCS ==> Total number of nodes added to the fringe: " + fringeNodesCount);
+                UCSTime = stopwatch.ElapsedMilliseconds;
                 RetracePath(startNode, targetNode, 5);
                 return;
             }
@@ -212,8 +228,10 @@ public class Pathfinding : MonoBehaviour {
                 }
                 NodePriority n = new NodePriority(neighbour, (p.priority + GetDistance(p.node, neighbour)));
                 queue.Add(n);
-                fringeNodesCount++;	;
                 neighbour.parent = p.node;
+            }
+            if(queue.Count > UCSFringeLength){
+                UCSFringeLength = queue.Count;
             }
         }
     }
