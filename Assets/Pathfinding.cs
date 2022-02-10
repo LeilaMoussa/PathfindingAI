@@ -19,8 +19,8 @@ public class Pathfinding : MonoBehaviour {
     }
 
     void Update() {
-		BFS(seeker.position,target.position);
-		DFS(seeker.position,target.position);
+	BFS(seeker.position,target.position);
+	DFS(seeker.position,target.position);
         UCS(seeker.position,target.position);   
         AStar(seeker.position,target.position, "1");  //This calls AStar with an additional argument to run the alternative heuristic function
         AStar(seeker.position,target.position);
