@@ -19,8 +19,8 @@ public class Pathfinding : MonoBehaviour {
     }
 
     void Update() {
-	BFS(seeker.position,target.position);
-	DFS(seeker.position,target.position);
+		BFS(seeker.position,target.position);
+		DFS(seeker.position,target.position);
         UCS(seeker.position,target.position);   
         AStar(seeker.position,target.position, "1");  //This calls AStar with an additional argument to run the alternative heuristic function
         AStar(seeker.position,target.position);
@@ -226,7 +226,7 @@ public class Pathfinding : MonoBehaviour {
                 if (!neighbour.walkable || visited.Contains(neighbour)) {
                     continue;
                 }
-                NodePriority n = new NodePriority(neighbour, (p.priority + GetDistance(p.node, neighbour)));
+                NodePriority n = new NodePriority(neighbour, (p.priority + GetDistance(p.node, neighbour, 1)));
                 queue.Add(n);
                 neighbour.parent = p.node;
             }
@@ -262,12 +262,20 @@ public class Pathfinding : MonoBehaviour {
         }
     }
 
-    int GetDistance(Node nodeA, Node nodeB) {
+    int GetDistance(Node nodeA, Node nodeB, int algoIndex = 0) {
         int dstX = Mathf.Abs(nodeA.gridX - nodeB.gridX);
         int dstY = Mathf.Abs(nodeA.gridY - nodeB.gridY);
 
-        if (dstX > dstY)
-            return 14*dstY + 10* (dstX-dstY);
-        return 14*dstX + 10 * (dstY-dstX);
+        if(algoIndex == 1){
+            if (dstX > dstY)
+                return 10*dstY + 10* (dstX-dstY);
+            return 10*dstX + 10 * (dstY-dstX);
+        }
+        else{
+            if (dstX > dstY)
+                return 14*dstY + 10* (dstX-dstY);
+            return 14*dstX + 10 * (dstY-dstX);
+        }
+        
     }
 }
