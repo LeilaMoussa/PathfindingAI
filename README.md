@@ -56,6 +56,15 @@ As per the project requirements, our UCS implementation assumes the same cost in
 The characteristics and results of each configuration are detailed in tables below.
 #### Configuration 1
 <!-- Table -->
+
+| Config 1 | Time | Expanded | Max Fringe |
+|----------|------|----------|------------|
+| A*       | 5    | 94       | 194        |
+| Alt A*   | 36   | 1298     | 182        |
+| DFS      | 11   | 7645     | 21632      |
+| BFS      | 13   | 6462     | 581        |
+| UCS      | 35   | 6545     | 757        |
+
 This configuration (and the next 2) positions seeker and target unobstructed from each other, showing the default behavior of each algorithm.
 A* is the most efficient by all measures. It is difficult to order the other algorithms because of the differing metrics.
 - DFS may be the second fastest, but it consumes the most memory. It plans to possibly explore more than half the grid! <!-- why? -->
@@ -66,6 +75,15 @@ A* is the most efficient by all measures. It is difficult to order the other alg
 
 #### Configuration 2
 <!-- Table -->
+
+| Config 2 | Time | Expanded | Max Fringe |
+|----------|------|----------|------------|
+| A*       | 0    | 15       | 64         |
+| Alt A*   | 11   | 205      | 77         |
+| DFS      | 1    | 15       | 92         |
+| BFS      | 6    | 588      | 271        |
+| UCS      | 6    | 555      | 348        |
+
 Again, A* performs the best on all fronts. Beyond that, this configuration (and the next) highlights the relationship between the performance and DFS and the order in which `Grid.GetNeighbors()` gets the current node's neigbors. DFS performs better than the 3 other algorithms and is even comparable to A*.
 <img width="1440" alt="DFS2" src="https://user-images.githubusercontent.com/58636465/153768893-3dd807aa-bdc2-49ae-8303-54a7c9b970a1.png">
 
@@ -74,10 +92,28 @@ Again, A* performs the best on all fronts. Beyond that, this configuration (and 
 
 #### Configuration 3
 <!-- Table -->
+
+| Config 3 | Time | Expanded | Max Fringe |
+|----------|------|----------|------------|
+| A*       | 1    | 15       | 64         |
+| Alt A*   | 10   | 186      | 81         |
+| DFS      | 8    | 5079     | 14543      |
+| BFS      | 4    | 565      | 328        |
+| UCS      | 35   | 650      | 402        |
+
 In this configuration, it is almost as if the relative positions of seeker and target from configuration 2 is inverted. DFS performs rather poorly (largest fringe and greatest number of expanded nodes).
 
 #### Configuration 4
 <!-- Table -->
+
+| Config 4 | Time | Expanded | Max Fringe |
+|----------|------|----------|------------|
+| A*       | 59   | 1632     | 273        |
+| Alt A*   | 84   | 3305     | 253        |
+| DFS      | 9    | 7388     | 20962      |
+| BFS      | 16   | 7464     | 536        |
+| UCS      | 38   | 7480     | 611        |
+
 This configuration puts 3 obstacles in the shortest path between seeker and target. Here, we notice something suprising: A* takes noticeably more time to execute than the other algorithms. Even upon multiple re-runs, the result is always that A* takes about 50-something ms, much more than we've seen before. At the same time, A* expands less nodes than DFS, BFS, and UCS. This is surprising because (a) A* should always be the fastest, given a good heuristic, and (b) expanded nodes should be a good measure of time complexity.
 My best guess is that with more obstacles between seeker and target, there is greater overhead associated with maintaining the heap in A*. This overhead may decrease with larger input, where we may see the performance of the other algorithms decrease further.
 <!-- say something about BFS? -->
