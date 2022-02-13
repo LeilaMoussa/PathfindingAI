@@ -51,6 +51,7 @@ public class Pathfinding : MonoBehaviour {
 
         Node startNode = grid.NodeFromWorldPoint(startPos);
         Node targetNode = grid.NodeFromWorldPoint(targetPos);
+
         Heap<Node> openSet = new Heap<Node>(grid.MaxSize);
         HashSet<Node> closedSet = new HashSet<Node>();
         openSet.Add(startNode);
@@ -60,7 +61,7 @@ public class Pathfinding : MonoBehaviour {
             if(algoIndex.Equals("0")){
                 AStarExpanded++;
             }
-            else{
+            else {
                 AStarAltExpanded++;
             }
             
@@ -71,7 +72,7 @@ public class Pathfinding : MonoBehaviour {
                     AStarTime = stopwatch.ElapsedMilliseconds;
                     RetracePath(startNode,targetNode, 1);
                 }
-                else{
+                else {
                     AStarAltTime = stopwatch.ElapsedMilliseconds;
                     RetracePath(startNode,targetNode, 2);
                 }
@@ -97,19 +98,16 @@ public class Pathfinding : MonoBehaviour {
                     }
                 }
             }
-            if(algoIndex.Equals("0") && openSet.Count > AStarFringeLength){
+            if(algoIndex.Equals("0") && openSet.Count > AStarFringeLength) {
                 AStarFringeLength = openSet.Count;
             }
-            else if(algoIndex.Equals("1") && openSet.Count > AStarAltFringeLength){
+            else if(algoIndex.Equals("1") && openSet.Count > AStarAltFringeLength) {
                 AStarAltFringeLength = openSet.Count;
             }
         }
     }
 
     void DFS(Vector3 startPos, Vector3 targetPos) {
-        // This is an iterative DFS. A recursive one would require too much memory
-        // on a large grid. It's only fair to compare the algorithms based on their 
-        // best performance.
         Stopwatch stopwatch = new Stopwatch();
     	stopwatch.Start();
 
@@ -136,7 +134,7 @@ public class Pathfinding : MonoBehaviour {
 
             visited.Add(currentNode);
 
-            foreach(Node neighbour in grid.GetNeighbours(currentNode)){
+            foreach(Node neighbour in grid.GetNeighbours(currentNode)) {
                 if (!neighbour.walkable  || visited.Contains(neighbour)) {
                     continue;
                 }
@@ -271,7 +269,7 @@ public class Pathfinding : MonoBehaviour {
                 return 10*dstY + 10* (dstX-dstY);
             return 10*dstX + 10 * (dstY-dstX);
         }
-        else{
+        else {
             if (dstX > dstY)
                 return 14*dstY + 10* (dstX-dstY);
             return 14*dstX + 10 * (dstY-dstX);
