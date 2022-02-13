@@ -6,7 +6,7 @@ Pathfinding Algorithms in Unity
 This is a mini-project in collaboration with Khaoula Ait Soussi for CSC 4301: Intoduction to Artifical Intelligence.
 
 ## Overview
-In this project, we adapted the code written by Sebastian Lague (link) by adding the following items:
+In this project, we adapted the code written by Sebastian Lague (https://github.com/SebLague/Pathfinding) by adding the following items:
 - a different A* implementation using a different heuristic
 - implementations of the following pathfinding algorithms: Depth First Search (DFS), Breadth First Search (BFS), and Uniform Cost Search (UCS).
 At the level of Unity, we also experimented with different configurations of the positions of the seeker and the target in a way that would allow for a richer discussion of the trade-offs among these 5 pathfinding implementations.
@@ -31,7 +31,7 @@ Throughout the experiments, we did not change the obstacles, rather we changed t
 ### Algorithms
 
 #### A*
-The A* implementation by Sebastian Lague that we chose is from Episode 4 (youtube and github links), where a heap implementation of the priority queue is used to optimize the time required to get the least cost neighbor.
+The A* implementation by Sebastian Lague that we chose is from Episode 4 (https://github.com/SebLague/Pathfinding/tree/master/Episode%2004%20-%20heap), where a heap implementation of the priority queue is used to optimize the time required to get the least cost neighbor.
 
 #### Alternative A*
 A* may be the best pathfinding algorithm we've seen, but "your algorithm is only as good as your heuristic". We tweaked the heuristic for neighbor selection to reflect this principle. Pretty much any other heuristic we could propose would either decrease performance or leave it unchanged. We redefined a node's f-cost for this purpose such that:
@@ -53,7 +53,6 @@ As per the project requirements, our UCS implementation assumes the same cost in
 
 ### Performance per configuration
 <!-- Talk about time and space complexities here and try to map that to measures, if possible -->
-<!-- Try to establish the relationship between time elapsed and nodes expanded -->
 The characteristics and results of each configuration are detailed in tables below.
 #### Configuration 1
 <!-- Table -->
@@ -61,11 +60,14 @@ This configuration (and the next 2) positions seeker and target unobstructed fro
 A* is the most efficient by all measures. It is difficult to order the other algorithms because of the differing metrics.
 - DFS may be the second fastest, but it consumes the most memory. It plans to possibly explore more than half the grid! <!-- why? -->
 <!-- DFS screenshot -->
+<img width="1440" alt="DFS1" src="https://user-images.githubusercontent.com/58636465/153768875-317bdd53-a7df-43f7-b36d-15054d1788e7.png">
+
 - We would expect expanded nodes to be closely correlated with time elapsed, but interestingly Alternative A* takes more time than DFS and BFS in spite of expanding far less nodes. Along the same vein, Alternative A* and UCS take about the same time to execute, but Alternative A* expands about a fifth of the nodes expanded by UCS. <!-- why -->
 
 #### Configuration 2
 <!-- Table -->
 Again, A* performs the best on all fronts. Beyond that, this configuration (and the next) highlights the relationship between the performance and DFS and the order in which `Grid.GetNeighbors()` gets the current node's neigbors. DFS performs better than the 3 other algorithms and is even comparable to A*.
+<img width="1440" alt="DFS2" src="https://user-images.githubusercontent.com/58636465/153768893-3dd807aa-bdc2-49ae-8303-54a7c9b970a1.png">
 
 <!-- the dfs thing is an opportunity to optimize the enumeration of neighbors, based on the coordinates of the seeker and target -->
 <!-- this optimization is not guaranteed to find the traget more efficiently -- in fact it might even be detrimental if there were obstacles -->
@@ -83,6 +85,3 @@ My best guess is that with more obstacles between seeker and target, there is gr
 ### Conclusion
 Based on these remarks, I conclude that A* is generally the most efficient pathfinding algorithm unless the path between seeker and target is significantly obstructed. The Alternative A* that we chose performs consistently poorly as expected due to the inconsistency of the alternative heuristic. The performance of DFS, among other things, is related to the order in which the neigbors are listed, such that if the algorithm starts out going in depth in the wrong direction, it will end up creating an unnecessarily long path. BFS is generally consistent and depends largely on the absolute distance between seeker and target because it operates like a flood and is bound to expand way more nodes than needed anyway.
 
-## Challenges and lessons learned
-This section is more oriented towards my personal impression on the project than any technical findings.
-- <!-- do i even do this?? --->
