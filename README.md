@@ -49,7 +49,7 @@ Of course, BFS works like a flood, expanding equally in all directions until the
 
 #### UCS
 As per the project requirements, our UCS implementation assumes the same cost in all directions (horizontal, vertical, and diagonal moves all cost 10). Before implementing uniform cost in all directions, we noticed UCS would generally take vertical or horizontal moves. After introducing this change, we noticed a greater tendency to go in diagonals, which is likely to increase performance especially if seeker and target are at a diagonal from each other.  
-Small note on implementation: Because UCS uses a priority queue as a fringe, we re-used the heap class provided by Sebastian Lague; but because each node is accompanied with a priority, we defined a class `Node Priority`.
+Small note on implementation: Because UCS uses a priority queue as a fringe, we re-used the heap class provided by Sebastian Lague; but because each node is accompanied with a priority, we defined a class `NodePriority`.
 
 ### Performance per configuration
 <!-- Talk about time and space complexities here and try to map that to measures, if possible -->
@@ -119,5 +119,5 @@ This configuration puts 3 obstacles in the shortest path between seeker and targ
 My best guess is that with more obstacles between seeker and target, there is greater overhead associated with maintaining the heap in A*. This overhead may decrease with larger input, where we may see the performance of the other algorithms decrease further.
 
 ### Conclusion
-Based on these remarks, I conclude that A* is generally the most efficient pathfinding algorithm unless the path between seeker and target is significantly obstructed. The Alternative A* that we chose performs consistently poorly as expected due to the inconsistency of the alternative heuristic. The performance of DFS, among other things, is related to the order in which the neigbors are listed, such that if the algorithm starts out going in depth in the wrong direction, it will end up creating an unnecessarily long path. BFS is generally consistent and depends largely on the absolute distance between seeker and target because it operates like a flood and is bound to expand way more nodes than needed anyway.
+Based on these remarks, I conclude that A* is generally the most efficient pathfinding algorithm unless the path between seeker and target is significantly obstructed. The Alternative A* that we chose performs consistently poorly as expected due to the inconsistency of the alternative heuristic. The performance of DFS, among other things, is related to the order in which the neighbors are listed, such that if the algorithm starts out going in depth in the wrong direction, it will end up creating an unnecessarily long path. BFS is generally consistent and depends largely on the absolute distance between seeker and target because it operates like a flood and is bound to expand way more nodes than needed anyway.
 
